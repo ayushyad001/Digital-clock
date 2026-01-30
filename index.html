@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Clock</title>
+
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body{
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a);
+      overflow: hidden;
+    }
+
+    /* Background glowing circles */
+    body::before{
+      content: "";
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: #3b82f6;
+      border-radius: 50%;
+      top: -100px;
+      left: -100px;
+      filter: blur(140px);
+      opacity: 0.7;
+    }
+
+    body::after{
+      content: "";
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: #ec4899;
+      border-radius: 50%;
+      bottom: -100px;
+      right: -100px;
+      filter: blur(140px);
+      opacity: 0.7;
+    }
+
+    .clock-box{
+      position: relative;
+      width: 420px;
+      padding: 30px;
+      text-align: center;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      z-index: 2;
+    }
+
+    h1{
+      font-size: 20px;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 18px;
+      letter-spacing: 1px;
+    }
+
+    .time{
+      font-size: 65px;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0px 0px 20px rgba(59,130,246,0.7);
+      margin-bottom: 10px;
+      transition: 0.3s;
+    }
+
+    .date{
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.65);
+      margin-bottom: 22px;
+    }
+
+    .btns{
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button{
+      padding: 10px 16px;
+      border: none;
+      outline: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: 0.25s;
+    }
+
+    .formatBtn{
+      background: linear-gradient(90deg,#3b82f6,#2563eb);
+      color: white;
+      box-shadow: 0px 0px 18px rgba(59,130,246,0.7);
+    }
+
+    .themeBtn{
+      background: linear-gradient(90deg,#ec4899,#db2777);
+      color: white;
+      box-shadow: 0px 0px 18px rgba(236,72,153,0.7);
+    }
+
+    button:hover{
+      transform: translateY(-3px);
+      opacity: 0.9;
+    }
+
+    .footer{
+      margin-top: 18px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Dark theme custom */
+    body.light{
+      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    }
+    body.light .clock-box{
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+    body.light .time{
+      color: #111827;
+      text-shadow: 0px 0px 18px rgba(37,99,235,0.5);
+    }
+    body.light h1,
+    body.light .date,
+    body.light .footer{
+      color: rgba(17, 24, 39, 0.7);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="clock-box">
+    <h1>✨ Digital Clock ✨</h1>
+
+    <div class="time" id="time">00:00:00</div>
+    <div class="date" id="date">Loading...</div>
+
+    <div class="btns">
+      <button class="formatBtn" id="formatBtn">24 Hour</button>
+      <button class="themeBtn" id="themeBtn">Light Mode</button>
+    </div>
+
+    <div class="footer">Made with ❤️ by You</div>
+  </div>
+
+  <script>
+    let is24Hour = true;
+    let isLight = false;
+
+    const timeEl = document.getElementById("time");
+    const dateEl = document.getElementById("date");
+    const formatBtn = document.getElementById("formatBtn");
+    const themeBtn = document.getElementById("themeBtn");
+
+    function pad(num){
+      return String(num).padStart(2,"0");
+    }
+
+    function updateClock(){
+      const now = new Date();
+      let h = now.getHours();
+      const m = now.getMinutes();
+      const s = now.getSeconds();
+
+      let suffix = "";
+      if(!is24Hour){
+        suffix = h >= 12 ? " PM" : " AM";
+        h = h % 12;
+        if(h === 0) h = 12;
+      }
+
+      timeEl.textContent = `${pad(h)}:${pad(m)}:${pad(s)}${suffix}`;
+
+      const options = { weekday:"long", year:"numeric", month:"long", day:"numeric" };
+      dateEl.textContent = now.toLocaleDateString(undefined, options);
+    }
+
+    // Toggle 12/24 hr
+    formatBtn.addEventListener("click", ()=>{
+      is24Hour = !is24Hour;
+      formatBtn.textContent = is24Hour ? "24 Hour" : "12 Hour";
+      updateClock();
+    });
+
+    // Toggle theme
+    themeBtn.addEventListener("click", ()=>{
+      isLight = !isLight;
+      document.body.classList.toggle("light", isLight);
+      themeBtn.textContent = isLight ? "Dark Mode" : "Light Mode";
+    });
+
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
